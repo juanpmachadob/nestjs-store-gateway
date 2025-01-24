@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
@@ -16,11 +17,13 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PaginationOrderDto } from './dto/pagination-order.dto';
 import { StatusOrderDto } from './dto/status-order.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('orders')
 export class OrdersController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto) {
     try {
@@ -33,6 +36,7 @@ export class OrdersController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   async findAll(@Query() orderPaginationDto: PaginationOrderDto) {
     try {
@@ -45,6 +49,7 @@ export class OrdersController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get('status/:status')
   async findAllByStatus(
     @Param() statusOrderDto: StatusOrderDto,
@@ -63,6 +68,7 @@ export class OrdersController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
@@ -75,6 +81,7 @@ export class OrdersController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   async changeStatus(
     @Param('id', ParseUUIDPipe) id: string,
